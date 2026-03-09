@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德道 | 官方入口</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        :root { --gold: #f3ba2f; --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --green: #4caf50; --blue: #2196F3; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 450px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 5px; }
+        
+        /* ========================================== */
+        /* 极致光效升级：双层叠加霓虹鎏金呼吸灯 */
+        /* ========================================== */
+        .logo-container { display: flex; align-items: center; justify-content: flex-start; }
+        .logo-text-new {
+            font-weight: 900; 
+            font-size: 18px; 
+            letter-spacing: 1px;
+            /* 高对比度的金属字面渐变 */
+            background: linear-gradient(135deg, #f3ba2f 0%, #ffffff 50%, #f3ba2f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* 绑定加强版呼吸灯动画 */
+            animation: intenseGoldenGlow 3s infinite ease-in-out;
+            transform-origin: left center;
+            white-space: nowrap;
+        }
+
+        /* 加强版光效关键帧 */
+        @keyframes intenseGoldenGlow {
+            0%, 100% { 
+                /* 基础状态：保持一层微弱的内发光和外光晕 */
+                filter: drop-shadow(0 0 5px rgba(243, 186, 47, 0.6)) drop-shadow(0 0 10px rgba(243, 186, 47, 0.3)); 
+                transform: scale(1); 
+            }
+            50% { 
+                /* 爆发状态：双层极亮光晕叠加，打造爆闪金属感 */
+                filter: drop-shadow(0 0 8px rgba(255, 230, 120, 0.9)) drop-shadow(0 0 25px rgba(243, 186, 47, 1)); 
+                transform: scale(1.02); 
+            } 
+        }
+        /* ========================================== */
+
+        .wallet-btn { background: var(--gold); border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 4px 10px rgba(243, 186, 47, 0.3); transition: 0.2s; color: #000; }
+        .wallet-btn:active { transform: scale(0.95); }
+        
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-top: 15px; border: 1px solid #333; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .card-title { font-size: 16px; color: var(--gold); font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--gold); padding-left: 10px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+        .stat-label { color: #888; }
+        .stat-value { color: var(--gold); font-weight: bold; }
+        .progress-container { background: #333; height: 10px; border-radius: 5px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #f3ba2f, #ffdb4d); height: 100%; width: 0%; transition: 0.8s; }
+        .main-btn { width: 100%; background: var(--gold); border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.2s; color: #000; }
+        .main-btn:active { transform: scale(0.98); }
+        .tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #252525; padding: 5px; border-radius: 12px; }
+        .tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 13px; color: #888; transition: 0.3s; }
+        .tab.active { background: var(--gold); color: black; font-weight: bold; box-shadow: 0 2px 8px rgba(243, 186, 47, 0.4); }
+        .balance-info { display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 8px; padding: 0 5px; }
+        input { width: 100%; background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; color: white; box-sizing: border-box; margin-bottom: 10px; outline: none; font-size: 14px; transition: 0.3s; }
+        input:focus { border-color: var(--gold); }
+        .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .ref-item { background: #2a2a2a; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        .ref-count { font-size: 18px; font-weight: bold; color: var(--gold); display: block; margin-bottom: 4px; }
+        .ref-link-area { background: #1a1a1a; padding: 12px; border-radius: 10px; font-size: 11px; margin-top: 10px; border: 1px dashed #444; text-align: center; }
+        
+        .toast {
+            visibility: hidden; min-width: 200px; background-color: rgba(40, 40, 40, 0.95); color: #fff;
+            text-align: center; border-radius: 20px; padding: 12px 20px; position: fixed; z-index: 1000;
+            left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            opacity: 0; transition: opacity 0.3s, bottom 0.3s; border: 1px solid #555;
+        }
+        .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-text-new">德道生态 · 宝贝燃烧</div>
+        </div>
+        <button class="wallet-btn" id="connectBtn" onclick="connect()">连接钱包</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">个人数据看板</div>
+        <div class="stat-row">
+            <span class="stat-label">参与本金 (USDT)</span>
+            <span id="burnedU" class="stat-value">0.00</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">已领收益 (USDT)</span>
+            <span id="claimedU" class="stat-value">0.00</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">待领收益 (USDT)</span>
+            <span id="pendingU" class="stat-value" style="color:var(--green)">0.00</span>
+        </div>
+        <hr style="border: 0; height: 1px; background: #333; margin: 15px 0;">
+        <div class="stat-row">
+            <span class="stat-label">当前权重 (剩余额度)</span>
+            <span id="activeWeight" class="stat-value" style="color:var(--blue)">0.00</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">全网权重占比</span>
+            <span id="weightPercent" class="stat-value">0.00%</span>
+        </div>
+
+        <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
+        <div style="text-align:center; font-size:11px; color:#666; margin-bottom:10px;">
+            <span id="multiplierText">1.0倍</span>出局进度: <span id="pPercent">0%</span>
+        </div>
+        <button class="main-btn" onclick="claim()">提取收益</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">布道奖励看板</div>
+        <div class="ref-grid">
+            <div class="ref-item"><span class="ref-count" id="ref1">0</span><span style="font-size:10px;color:#888;">直接分享 (10%)</span></div>
+            <div class="ref-item"><span class="ref-count" id="ref2">0</span><span style="font-size:10px;color:#888;">间接分享 (5%)</span></div>
+        </div>
+        <div class="stat-row" style="background:#2a2a2a; padding:10px; border-radius:10px;">
+            <span class="stat-label">系统提示:</span>
+            <span class="stat-value" style="font-size:11px;">布道奖励将直接发放至钱包</span>
+        </div>
+        
+        <div class="ref-link-area">
+            <div style="color:#888; margin-bottom:8px;">您的专属布道链接：</div>
+            <div id="refUrl" style="color:var(--gold); word-break:break-all; padding: 5px; background: #111; border-radius: 5px;">连接钱包后生成</div>
+            <button onclick="copyRef()" style="margin-top:10px; background:none; border:1px solid var(--gold); color:var(--gold); padding:6px 15px; border-radius:20px; cursor:pointer; font-size:12px; font-weight:bold; transition: 0.2s;">一键复制链接</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">立即参与共识</div>
+        <div class="tabs">
+            <div class="tab active" onclick="setMode('BNB', this)">BNB</div>
+            <div class="tab" onclick="setMode('USDT', this)">USDT</div>
+            <div class="tab" onclick="setMode('BABY', this)">BABY</div>
+        </div>
+        <div class="balance-info">
+            <span>可用余额:</span>
+            <span><span id="assetBal">0.00</span> <span id="assetSym">BNB</span></span>
+        </div>
+        <input type="number" id="burnInput" placeholder="正在读取链上门槛...">
+        <button class="main-btn" id="burnBtn" onclick="doBurn()">确认参与</button>
+    </div>
+</div>
+
+<div id="toast" class="toast">提示信息</div>
+
+<script>
+    const ADDR = {
+        BURN: "0xb477a9b7df3fA28c49de0D49EC6813AF283C32dF",
+        USDT: "0x55d398326f99059fF775485246999027B3197955",
+        BABY: "0x9bA7099D2EE0b0Af91DcFfc3C3E88Ba72aa3c2D6" 
+    };
+
+    const ABI = [
+        "function burnWithBNB(address ref) external payable",
+        "function burnWithUSDT(uint256 amount, address ref) external",
+        "function burnWithBaby(uint256 amount, address ref) external",
+        "function claim() external",
+        "function userInfo(address) view returns (uint256 burnedUSDT, uint256 claimedUSDT, uint256 rewardDebt, address referrer, uint256 directCount, uint256 indirectCount, uint256 lastActionBlock)",
+        "function pendingReward(address) view returns (uint256)",
+        "function getReferralCount(address) view returns (uint256 direct, uint256 indirect)",
+        "function balanceOf(address account) view returns (uint256)",
+        "function approve(address spender, uint256 amount) external returns (bool)",
+        "function allowance(address owner, address spender) view returns (uint256)",
+        "function minBurnAmount() view returns (uint256)",
+        "function exitMultiplier() view returns (uint256)",
+        "function totalWeight() view returns (uint256)",
+        "function getActiveWeight(address _user) view returns (uint256)"
+    ];
+
+    let provider, signer, userAddr, contract, mode = 'BNB', globalExitMultiplier = 110;
+
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.innerText = message;
+        toast.className = "toast show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
+    }
+
+    function getReferrer() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref');
+        return (ref && ethers.utils.isAddress(ref)) ? ref : "0x0000000000000000000000000000000000000000";
+    }
+
+    async function setMode(m, el) {
+        mode = m;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('assetSym').innerText = m;
+        updateBalance();
+    }
+
+    async function connect() {
+        if (!window.ethereum) return showToast("请在 Web3 钱包内打开");
+        try {
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            const accs = await provider.send("eth_requestAccounts", []);
+            userAddr = accs[0];
+            signer = provider.getSigner();
+            contract = new ethers.Contract(ADDR.BURN, ABI, signer);
+            document.getElementById('connectBtn').innerText = userAddr.substring(0,6)+"..."+userAddr.substring(38);
+            document.getElementById('refUrl').innerText = window.location.origin + window.location.pathname + "?ref=" + userAddr;
+            showToast("钱包连接成功");
+            await loadGlobalConfig();
+            updateBalance();
+            loadData();
+            setInterval(loadData, 8000); 
+        } catch (err) { console.error(err); }
+    }
+
+    async function loadGlobalConfig() {
+        if (!contract) return;
+        try {
+            const minBurn = await contract.minBurnAmount();
+            document.getElementById('burnInput').placeholder = `最小参与门槛: ${ethers.utils.formatEther(minBurn)} USDT`;
+            const exitMult = await contract.exitMultiplier();
+            globalExitMultiplier = exitMult.toNumber(); 
+            document.getElementById('multiplierText').innerText = `${(globalExitMultiplier / 100).toFixed(1)}倍`;
+        } catch (e) { console.error(e); }
+    }
+
+    async function updateBalance() {
+        if (!userAddr) return;
+        try {
+            let bal = (mode === 'BNB') ? await provider.getBalance(userAddr) : await (new ethers.Contract(ADDR[mode], ABI, provider)).balanceOf(userAddr);
+            document.getElementById('assetBal').innerText = parseFloat(ethers.utils.formatEther(bal)).toFixed(4);
+        } catch (e) { console.error(e); }
+    }
+
+    async function loadData() {
+        if (!contract || !userAddr) return;
+        try {
+            const info = await contract.userInfo(userAddr); 
+            const p = await contract.pendingReward(userAddr); 
+            const actWeight = await contract.getActiveWeight(userAddr);
+            const totWeight = await contract.totalWeight();
+            
+            const b = parseFloat(ethers.utils.formatEther(info.burnedUSDT));
+            const c = parseFloat(ethers.utils.formatEther(info.claimedUSDT));
+            const pending = parseFloat(ethers.utils.formatEther(p));
+            const activeU = parseFloat(ethers.utils.formatEther(actWeight));
+            const totalU = parseFloat(ethers.utils.formatEther(totWeight));
+
+            document.getElementById('burnedU').innerText = b.toFixed(2);
+            document.getElementById('claimedU').innerText = c.toFixed(2);
+            document.getElementById('pendingU').innerText = pending.toFixed(2);
+            document.getElementById('activeWeight').innerText = activeU.toFixed(2);
+            document.getElementById('weightPercent').innerText = (totalU > 0) ? (activeU / totalU * 100).toFixed(4) + "%" : "0.00%";
+
+            if (b > 0) {
+                let pct = Math.min(((c + pending) / (b * globalExitMultiplier / 100)) * 100, 100);
+                document.getElementById('pBar').style.width = pct + "%";
+                document.getElementById('pPercent').innerText = pct.toFixed(1) + "%";
+            }
+            const refCounts = await contract.getReferralCount(userAddr);
+            document.getElementById('ref1').innerText = refCounts.direct.toString();
+            document.getElementById('ref2').innerText = refCounts.indirect.toString();
+        } catch (e) { console.error(e); }
+    }
+
+    async function claim() {
+        if (!contract) return;
+        
+        // 1. 新增：前端防呆拦截，如果是 0 则直接拒绝，省下 Gas 费
+        const pendingValue = document.getElementById('pendingU').innerText;
+        if (parseFloat(pendingValue) <= 0) {
+            return showToast("当前暂无可提取的收益");
+        }
+
+        try {
+            const tx = await contract.claim(); 
+            showToast("提取中...");
+            await tx.wait();
+            showToast("提取成功！");
+            loadData(); // 提取完刷新数据
+        } catch (e) { 
+            console.error(e);
+            showToast("暂无收益或提取失败"); 
+        }
+    }
+
+    async function doBurn() {
+        if (!userAddr) return showToast("请先连接钱包");
+        const val = document.getElementById('burnInput').value;
+        if (!val || val <= 0) return showToast("金额无效");
+        const amount = ethers.utils.parseEther(val);
+        const ref = getReferrer();
+        const btn = document.getElementById('burnBtn');
+        try {
+            btn.disabled = true; btn.innerText = "处理中...";
+            if (mode === 'BNB') {
+                await (await contract.burnWithBNB(ref, { value: amount })).wait();
+            } else {
+                const token = new ethers.Contract(ADDR[mode], ABI, signer);
+                if ((await token.allowance(userAddr, ADDR.BURN)).lt(amount)) {
+                    showToast("授权中...");
+                    await (await token.approve(ADDR.BURN, ethers.constants.MaxUint256)).wait();
+                }
+                showToast("确认中...");
+                if (mode === 'USDT') await (await contract.burnWithUSDT(amount, ref)).wait();
+                else await (await contract.burnWithBaby(amount, ref)).wait();
+            }
+            showToast("参与成功！"); document.getElementById('burnInput').value = '';
+            loadData(); updateBalance();
+        } catch (e) { showToast("操作失败"); } finally { btn.disabled = false; btn.innerText = "确认参与"; }
+    }
+
+    function copyRef() {
+        const url = document.getElementById('refUrl').innerText;
+        if(url.includes("生成")) return showToast("请先连接钱包");
+        
+        // 2. 修复：兼容 HTTPS 和非 HTTPS (如本地 HTTP 测试) 各种环境
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast("已复制到剪贴板");
+            });
+        } else {
+            // 传统兼容降级方案
+            const textArea = document.createElement("textarea");
+            textArea.value = url;
+            textArea.style.position = "absolute";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("已复制到剪贴板");
+            } catch (err) {
+                showToast("复制失败，请手动长按链接复制");
+            } finally {
+                textArea.remove();
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
