@@ -53,8 +53,6 @@
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
         .stat-label { color: #888; }
         .stat-value { color: var(--gold); font-weight: bold; }
-        .progress-container { background: #333; height: 10px; border-radius: 5px; margin: 15px 0; overflow: hidden; }
-        .progress-bar { background: linear-gradient(90deg, #f3ba2f, #ffdb4d); height: 100%; width: 0%; transition: 0.8s; }
         .main-btn { width: 100%; background: var(--gold); border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.2s; color: #000; }
         .main-btn:active { transform: scale(0.98); }
         .tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #252525; padding: 5px; border-radius: 12px; }
@@ -120,11 +118,7 @@
             <span id="weightPercent" class="stat-value">0.00%</span>
         </div>
 
-        <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
-        <div style="text-align:center; font-size:11px; color:#666; margin-bottom:10px;">
-            <span id="multiplierText">1.0倍</span>出局进度: <span id="pPercent">0%</span>
-        </div>
-        <button class="main-btn" onclick="claim()">提取收益</button>
+        <button class="main-btn" onclick="claim()" style="margin-top: 20px;">提取收益</button>
     </div>
 
     <div class="card">
@@ -244,7 +238,6 @@
             document.getElementById('burnInput').placeholder = `最小参与门槛: ${ethers.utils.formatEther(minBurn)} USDT`;
             const exitMult = await contract.exitMultiplier();
             globalExitMultiplier = exitMult.toNumber(); 
-            document.getElementById('multiplierText').innerText = `${(globalExitMultiplier / 100).toFixed(1)}倍`;
         } catch (e) { console.error(e); }
     }
 
@@ -276,11 +269,6 @@
             document.getElementById('activeWeight').innerText = activeU.toFixed(2);
             document.getElementById('weightPercent').innerText = (totalU > 0) ? (activeU / totalU * 100).toFixed(4) + "%" : "0.00%";
 
-            if (b > 0) {
-                let pct = Math.min(((c + pending) / (b * globalExitMultiplier / 100)) * 100, 100);
-                document.getElementById('pBar').style.width = pct + "%";
-                document.getElementById('pPercent').innerText = pct.toFixed(1) + "%";
-            }
             const refCounts = await contract.getReferralCount(userAddr);
             document.getElementById('ref1').innerText = refCounts.direct.toString();
             document.getElementById('ref2').innerText = refCounts.indirect.toString();
