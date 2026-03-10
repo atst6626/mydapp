@@ -61,8 +61,12 @@
         .tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 13px; color: #888; transition: 0.3s; }
         .tab.active { background: var(--gold); color: black; font-weight: bold; box-shadow: 0 2px 8px rgba(243, 186, 47, 0.4); }
         .balance-info { display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 8px; padding: 0 5px; }
-        input { width: 100%; background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; color: white; box-sizing: border-box; margin-bottom: 10px; outline: none; font-size: 14px; transition: 0.3s; }
+        input { width: 100%; background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; color: white; box-sizing: border-box; margin-bottom: 5px; outline: none; font-size: 14px; transition: 0.3s; }
         input:focus { border-color: var(--gold); }
+        
+        /* 估值提示区样式 */
+        .calc-result { font-size: 12px; color: var(--gold); text-align: right; min-height: 16px; margin-bottom: 10px; padding-right: 5px; }
+
         .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .ref-item { background: #2a2a2a; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
         .ref-count { font-size: 18px; font-weight: bold; color: var(--gold); display: block; margin-bottom: 4px; }
@@ -81,8 +85,13 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo-container">
-            <div class="logo-text-new">德道生态 · 宝贝燃烧</div>
+        <div style="display: flex; flex-direction: column;">
+            <div class="logo-container">
+                <div class="logo-text-new">德道生态 · 宝贝燃烧</div>
+            </div>
+            <div id="topPriceBadge" style="font-size: 12px; color: var(--gold); margin-top: 4px; display: none;">
+                💰 BABY: <span id="realTimePrice" style="font-weight: bold;">--</span> USDT
+            </div>
         </div>
         <button class="wallet-btn" id="connectBtn" onclick="connect()">连接钱包</button>
     </div>
@@ -147,7 +156,9 @@
             <span>可用余额:</span>
             <span><span id="assetBal">0.00</span> <span id="assetSym">BNB</span></span>
         </div>
-        <input type="number" id="burnInput" placeholder="正在读取链上门槛...">
+        <input type="number" id="burnInput" placeholder="正在读取链上门槛..." oninput="calcPreview()">
+        <div id="calcResult" class="calc-result"></div>
+        
         <button class="main-btn" id="burnBtn" onclick="doBurn()">确认参与</button>
     </div>
 </div>
@@ -156,7 +167,7 @@
 
 <script>
     const ADDR = {
-        BURN: "",
+        BURN: "0x92551A8A53D91429099c9751719fc0F51CF59907",
         USDT: "0x55d398326f99059fF775485246999027B3197955",
         BABY: "0x9bA7099D2EE0b0Af91DcFfc3C3E88Ba72aa3c2D6" 
     };
@@ -175,10 +186,13 @@
         "function minBurnAmount() view returns (uint256)",
         "function exitMultiplier() view returns (uint256)",
         "function totalWeight() view returns (uint256)",
-        "function getActiveWeight(address _user) view returns (uint256)"
+        "function getActiveWeight(address _user) view returns (uint256)",
+        // 计价器 ABI
+        "function getUSDTValue(uint256 _amount, bool _isBNB) view returns (uint256)"
     ];
 
     let provider, signer, userAddr, contract, mode = 'BNB', globalExitMultiplier = 110;
+    let calcTimeout; 
 
     function showToast(message) {
         const toast = document.getElementById("toast");
@@ -198,6 +212,10 @@
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         document.getElementById('assetSym').innerText = m;
+        
+        document.getElementById('burnInput').value = '';
+        document.getElementById('calcResult').innerText = '';
+        
         updateBalance();
     }
 
@@ -266,13 +284,51 @@
             const refCounts = await contract.getReferralCount(userAddr);
             document.getElementById('ref1').innerText = refCounts.direct.toString();
             document.getElementById('ref2').innerText = refCounts.indirect.toString();
+
+            // ==========================================
+            // 新增：自动刷新顶部实时币价
+            // ==========================================
+            try {
+                const oneBaby = ethers.utils.parseEther("1"); // 1个 BABY (1e18)
+                const usdtVal = await contract.getUSDTValue(oneBaby, false);
+                const priceFormatted = parseFloat(ethers.utils.formatEther(usdtVal)).toFixed(6); // 保留6位小数，更显专业
+                
+                document.getElementById('realTimePrice').innerText = priceFormatted;
+                document.getElementById('topPriceBadge').style.display = 'block';
+            } catch (priceErr) {
+                console.log("实时币价更新中...");
+            }
+            // ==========================================
+
         } catch (e) { console.error(e); }
+    }
+
+    async function calcPreview() {
+        const val = document.getElementById('burnInput').value;
+        const resDiv = document.getElementById('calcResult');
+        
+        if (!val || val <= 0) { resDiv.innerText = ""; return; }
+        if (mode === 'USDT') { resDiv.innerText = `折算价值 ≈ ${parseFloat(val).toFixed(2)} USDT`; return; }
+        if (!contract) { resDiv.innerText = "请先连接钱包"; return; }
+
+        clearTimeout(calcTimeout);
+        resDiv.innerText = "计算实时估值中...";
+        
+        calcTimeout = setTimeout(async () => {
+            try {
+                const amount = ethers.utils.parseEther(val);
+                const isBNB = (mode === 'BNB');
+                const usdtVal = await contract.getUSDTValue(amount, isBNB);
+                const formatted = parseFloat(ethers.utils.formatEther(usdtVal)).toFixed(4);
+                resDiv.innerText = `折算价值 ≈ ${formatted} USDT`;
+            } catch (e) {
+                resDiv.innerText = "获取实时价值失败或数值过大";
+            }
+        }, 500); 
     }
 
     async function claim() {
         if (!contract) return;
-        
-        // 1. 新增：前端防呆拦截，如果是 0 则直接拒绝，省下 Gas 费
         const pendingValue = document.getElementById('pendingU').innerText;
         if (parseFloat(pendingValue) <= 0) {
             return showToast("当前暂无可提取的收益");
@@ -283,7 +339,7 @@
             showToast("提取中...");
             await tx.wait();
             showToast("提取成功！");
-            loadData(); // 提取完刷新数据
+            loadData();
         } catch (e) { 
             console.error(e);
             showToast("暂无收益或提取失败"); 
@@ -312,21 +368,40 @@
                 else await (await contract.burnWithBaby(amount, ref)).wait();
             }
             showToast("参与成功！"); document.getElementById('burnInput').value = '';
+            document.getElementById('calcResult').innerText = ''; 
             loadData(); updateBalance();
-        } catch (e) { showToast("操作失败"); } finally { btn.disabled = false; btn.innerText = "确认参与"; }
+        } catch (e) { 
+            console.error(e);
+            let errorMsg = "操作失败，请重试";
+            let fullError = (e.reason || (e.data && e.data.message) || e.message || "").toLowerCase();
+
+            if (fullError.includes("user rejected")) {
+                errorMsg = "您在钱包中取消了操作";
+            } else if (fullError.includes("insufficient funds")) {
+                errorMsg = "钱包余额不足，或缺少 BNB 矿工费";
+            } else if (fullError.includes("amount below")) {
+                errorMsg = "抱歉，未满足最小参与门槛或已出局";
+            } else if (fullError.includes("price manipulation")) {
+                errorMsg = "触发价格保护机制，禁止参与";
+            } else if (fullError.includes("insufficient_output_amount") || fullError.includes("transfer helper")) {
+                errorMsg = "流动性波动过大，兑换失败";
+            }
+
+            showToast(errorMsg); 
+        } finally { 
+            btn.disabled = false; btn.innerText = "确认参与"; 
+        }
     }
 
     function copyRef() {
         const url = document.getElementById('refUrl').innerText;
         if(url.includes("生成")) return showToast("请先连接钱包");
         
-        // 2. 修复：兼容 HTTPS 和非 HTTPS (如本地 HTTP 测试) 各种环境
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(url).then(() => {
                 showToast("已复制到剪贴板");
             });
         } else {
-            // 传统兼容降级方案
             const textArea = document.createElement("textarea");
             textArea.value = url;
             textArea.style.position = "absolute";
@@ -346,6 +421,4 @@
 </script>
 
 </body>
-
 </html>
-
