@@ -269,7 +269,7 @@
                     <h2>BABY 燃烧</h2>
                     <p>启动通缩销毁机制，赋能核心价值，共享生态红利</p>
                 </div>
-                <a href="./burn.html" class="solid-btn btn-burn">
+                <a href="./burn.html" id="btnBurn" class="solid-btn btn-burn">
                     进入燃烧系统 <span class="arrow">→</span>
                 </a>
             </div>
@@ -280,12 +280,25 @@
                     <h2>DAOTEN 裂变</h2>
                     <p>启动三三矩阵网络，全网公排滑落，开启被动收益</p>
                 </div>
-                <a href="http://你的DAOTEN裂变域名.com" class="solid-btn btn-fission">
+                <a href="./daoten.html" id="btnFission" class="solid-btn btn-fission">
                     进入裂变矩阵 <span class="arrow">→</span>
                 </a>
             </div>
         </div>
     </div>
 
+    <script>
+        // 获取当前浏览器网址后面的参数（比如 ?ref=0x123...）
+        const queryString = window.location.search;
+        
+        // 如果有参数，就自动把它拼接到两个按钮的链接后面
+        if (queryString) {
+            const btnBurn = document.getElementById('btnBurn');
+            const btnFission = document.getElementById('btnFission');
+            
+            if (btnBurn) btnBurn.href = "./burn.html" + queryString;
+            if (btnFission) btnFission.href = "./daoten.html" + queryString;
+        }
+    </script>
 </body>
 </html>
