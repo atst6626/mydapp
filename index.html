@@ -297,7 +297,12 @@
             const btnFission = document.getElementById('btnFission');
             
             if (btnBurn) btnBurn.href = "./burn.html" + queryString;
-            if (btnFission) btnFission.href = "https://preeminent-wisp-124051.netlify.app/" + queryString;
+            if (btnFission) {
+                  btnFission.onclick = function(event) {
+                  event.preventDefault(); // 强行打断所有老代码的拦截
+                window.open("https://preeminent-wisp-124051.netlify.app/" + queryString, "_blank");
+             };
+            }
         }
     </script>
 </body>
