@@ -287,36 +287,31 @@
         </div>
     </div>
 
-    <script>
-        // 获取当前浏览器网址后面的参数（比如 ?ref=0x123...）
-        const queryString = window.location.search;
+   <script>
+        // 获取当前浏览器网址后面的参数（比如 ?ref=0x123...），如果没有参数，就等于空字符串
+        const queryString = window.location.search || "";
         
-        // 如果有参数，就自动把它拼接到两个按钮的链接后面
-        if (queryString) {
-            const btnBurn = document.getElementById('btnBurn');
-            const btnFission = document.getElementById('btnFission');
-            
-            if (btnBurn) btnBurn.href = "./burn.html" + queryString;
-            
-            if (btnFission) {
-                 // 注意最后的 true，这是关键！代表我们要“抢跑”，在老代码发现之前先执行我们的动作
-                btnFission.addEventListener("click", function(event) {
-                event.preventDefault(); // 阻止它原本要跳转的错误链接
-                event.stopPropagation(); // 阻止事件传给老页面
-                event.stopImmediatePropagation(); // 彻底杀死老代码绑在这个按钮上的其他动作
+        const btnBurn = document.getElementById('btnBurn');
+        const btnFission = document.getElementById('btnFission');
+        
+        // 1. 处理燃烧按钮 (留在老页面)
+        if (btnBurn) {
+            btnBurn.href = "./burn.html" + queryString;
+        }
+        
+        // 2. 处理裂变按钮 (无论有没有参数，都必须去 Netlify！)
+        if (btnFission) {
+            btnFission.addEventListener("click", function(event) {
+                event.preventDefault(); // 阻止原本的跳转
+                event.stopPropagation(); // 阻止事件冒泡
+                event.stopImmediatePropagation(); // 杀死其他拦截
 
-                // 做个保险：如果 queryString 没获取到，就跳主页，不至于崩溃没反应
-                var finalUrl = "https://preeminent-wisp-124051.netlify.app/";
-                if (typeof queryString !== "undefined") {
-                  finalUrl += queryString;
-                }
-    
-                    // 强制新窗口打开
-                    window.open(finalUrl, "_blank");
-                  }, true); 
-                }
-
-            
+                // 拼装最终的 Netlify 网址，把参数带上
+                var finalUrl = "https://preeminent-wisp-124051.netlify.app/" + queryString;
+                
+                // 强制新标签页打开
+                window.open(finalUrl, "_blank"); 
+            }, true); 
         }
     </script>
 </body>
