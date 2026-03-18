@@ -15,13 +15,13 @@
 	}
 	
 	&:before {	
-		background: url('/images/bg_level.png') no-repeat center top;
+		background: url('./images/bg_level.png') no-repeat center top;
 		background-size: 100% auto;
 	
 	}
 	
 	&::after{
-		background: url('/images/bg_level_2.png') no-repeat center top;
+		background: url('./images/bg_level_2.png') no-repeat center top;
 		background-size: 100% auto;
 		animation: float 2s linear infinite;
 	}	
@@ -182,7 +182,7 @@
 	@for $i from 0 through 10 {
 	  &.level-#{$i} {
 	    .level-icon {
-	      content: url('/images/icon_level_#{$i}.png');
+	      content: url('./images/icon_level_#{$i}.png');
 	    }
 	  }
 	}

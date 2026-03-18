@@ -55,7 +55,7 @@
 		height: 24px;
 		
 		@at-root [data-theme="light"] & {
-			content:url('/images/light/logo.png');
+			content:url('./images/light/logo.png');
 		}
 	}
 }
