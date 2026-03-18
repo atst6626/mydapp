@@ -1,0 +1,465 @@
+// Base theme properties
+$themes: (
+	dark:( // bg color
+		background_primary: #4ba5a7,
+		background_primary_tint: #393637,
+		background_second: #74dcd2,
+		background_header: #2d323e,
+		background_light: #1e2329,
+		background_light_deep: #101217,
+		background_gray: #333d48,
+		background_gray_deep: #333d48,
+		background_gray_tint: #454f64,
+		background_tint: #667084,
+		background_none: transparent,
+		
+		// 文字颜色
+		color_primary: #f0b90b,
+		color_second: #74dcd2,
+		color_white: #fff,
+		color_black: #1e2329,
+		color_main: #fff,
+		color_sec: #d0d3d7,
+		color_gray: #9A9EA5,
+		color_gray_deep: #787b7d,
+		color_rise: #26d962,
+		color_fall: #ff2c41,
+		color_rise_tint: #6db1aa,
+		color_fall_tint: #b16d73,
+
+		// border
+		border: rgba(255,255,255,0.1),
+
+		// 蒙版（遮罩层）
+		mask: rgba(0, 0, 0, 0.6),
+	),
+	light:(
+		background_primary: #6366f1,
+		background_primary_tint: #393637,
+		background_second: #74dcd2,
+		background_header: #fff,
+		background_light: #fff,
+		background_light_deep: #f8f9fa,
+		background_gray: #f1f3f4,
+		background_gray_deep: #f1f3f4,
+		background_gray_tint: #eee,
+		background_tint: #cfcfcf,
+		background_none: transparent,
+		
+		// 文字颜色
+		color_primary:#6366f1,
+		color_second: #74dcd2,
+		color_white: #fff,
+		color_black: #1e2329,
+		color_main: #04070e,
+		color_sec: #5c707e,
+		color_gray: #6b7280,
+		color_gray_deep: #64748B,
+		color_rise: #34d398,
+		color_fall: #fb7185,
+		color_rise_tint: #6db1aa,
+		color_fall_tint: #b16d73,
+		
+		// border
+		border: #E5E7EB,
+		
+		// 蒙版（遮罩层）
+		mask: rgba(255, 255, 255, 0.6),	
+	)
+);
+
+@mixin themeify {
+
+	@each $theme-name,
+	$theme-map in $themes {
+		//!global 把局部变量强升为全局变量
+		$theme-map: $theme-map !global;
+
+		//判断html的data-theme的属性值 #{}是sass的插值表达式
+		//& sass嵌套里的父容器标识  @content是混合器插槽，像vue的slot
+		[data-theme="#{$theme-name}"] & {
+			@content;
+		}
+	}
+}
+
+// 声明一个根据key获取颜色的function
+@function themed($key) {
+	@return map-get($theme-map, $key);
+}
+
+
+// 获取背景颜色
+@mixin background($color) {
+	@include themeify {
+		background: themed($color);
+	}
+}
+
+// 获取文字颜色
+@mixin color($color) {
+	@include themeify {
+		color: themed($color);
+	}
+}
+
+// 文字样式
+@mixin font($size, $family: rob, $height: 1) {
+	font-size: $size;
+	line-height: $height;
+	font-family: $family;
+}
+
+// 获取边框颜色
+@mixin border($border, $direction: top,$style:solid) {
+	@include themeify {
+		border-color: themed($border);
+	}
+
+	@if ($direction==top) {
+		border-top-width: 1px;
+		border-top-style: $style;
+	}
+
+	@else if($direction==left) {
+		border-left-width: 1px;
+		border-left-style: $style;
+	}
+
+	@else if($direction==right) {
+		border-right-width: 1px;
+		border-right-style: $style;
+	}
+
+	@else if($direction==bottom) {
+		border-bottom-width: 1px;
+		border-bottom-style: $style;
+	}
+
+	@else if($direction==border) {
+		border-width: 1px;
+		border-style: $style;
+	}
+}
+
+// 获取蒙版颜色
+@mixin mask($color, $type: blur) {
+	@include themeify {
+		background: themed($color);
+	}
+
+	@if($type==blur) {
+		backdrop-filter: blur(4px);
+	}
+	
+	&.transparent {
+		background: transparent;
+	}
+}
+
+// 正方形（正方形的按钮：social，modular的function，...）
+@mixin square($width, $height, $pointer: true) {
+	width: $width;
+	height: $height;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 4px;
+
+	i {
+		display: inline-block;
+		font-size: inherit;
+		// opacity: 0.7;
+		transition: all .2s;
+	}
+
+	&:hover {
+		i {
+			opacity: 1;
+		}
+	}
+
+	@if($pointer==true) {
+		cursor: pointer;
+	}
+
+	@else if($pointer==false) {
+		cursor: default;
+	}
+}
+
+// 可点击（button...）
+@mixin clickable() {
+	cursor: pointer;
+	transition: all .2s;
+}
+
+// 文字透明度
+@mixin opacity($alpha) {
+	opacity: $alpha;
+}
+
+// 元素高度（input,button）
+@mixin height($size: normal, $type: input, $font: rob) {
+	font-family: $font;
+	border-radius: 12px;
+	height: var(--height);
+
+	@if($size==large) {
+		--height: 56px;
+		font-size: 24px;
+
+		@if($type==button) {
+			padding: 0 48px;
+		}
+	}
+	
+	@if($type==button) {
+		// border-radius: 24px;
+	}
+
+	@if($size==normal) {
+		--height: 48px;
+		font-size: 16px;
+
+		@if($type==button) {
+			padding: 0 36px;
+		}
+	}
+
+	@else if($size==small) {
+		--height: 36px;
+		font-size: 14px;
+
+		@if($type==button) {
+			padding: 0 20px;
+		}
+	}
+
+	@else if($size==smaller) {
+		--height: 32px;
+		font-size: 12px;
+
+		@if($type==button) {
+			padding: 0 16px;
+		}
+	}
+
+	@else if($size==mini) {
+		--height: 28px;
+		font-size: 12px;
+
+		@if($type==button) {
+			padding: 0 12px;
+		}
+	}
+
+	@else if($size==tiny) {
+		--height: 22px;
+		font-size: 10px;
+
+		@if($type==button) {
+			padding: 0 8px;
+		}
+	}
+	
+	@if($type==button) {
+		&.circle {
+			width: var(--height);
+			border-radius: 50%;
+			padding: 0;
+		}
+	}
+}
+
+// 按钮创建::before 伪元素（tab,button...）
+@mixin before() {
+	position: relative;
+	z-index: 3;
+
+	&::before {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: 32px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: -1;
+	}
+}
+
+// 占位符（placeholder,loading...）
+@mixin placehoder() {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 64px 0;
+	text-align: center;
+	grid-gap: 12px;
+
+	&.bg {
+		border-radius: 4px;
+		@include background("background_dark");
+	}
+
+	&.fixed,
+	&.absolute {
+		padding: 0;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 10;
+		@include mask("mask");
+		
+		&.z-index-low{
+			z-index: 1;
+		}
+	}
+
+	// 溢出
+	&.overflow {
+		width: unset;
+		top: -8px;
+		left: -8px;
+		right: -8px;
+		bottom: -8px;
+		@include background("background_none");
+	}
+
+	&.z-index-top {
+		z-index: 100;
+	}
+
+	&.absolute {
+		position: absolute;
+	}
+
+	&.fixed {
+		position: fixed;
+		padding: 24px;
+	}
+
+	&.fillet {
+		border-radius: 4px;
+	}
+
+	&.full {
+		grid-column: 1 / -1;
+	}
+
+	&.small {
+		grid-gap: 8px;
+		// p,
+		// h5 {
+		// 	margin-top: 8px;
+		// }
+	}
+
+	&.transparent {
+		@include background("background_none");
+	}
+	
+	&.no-blur {
+		backdrop-filter: blur(0);
+	}
+
+	// >p,
+	// >h5 {
+	// 	margin-top: 12px;
+	// }
+
+	>p {
+		@include color("color_sec");
+		@include font(12px);
+	}
+
+	>h5 {
+		@include color("color_main");
+		@include font(16px);
+	}
+
+	img {
+		&.small {
+			height: 96px;
+		}
+	}
+}
+
+
+@mixin center($value: absolute,$horizontal: center, $vertical: center) {
+	position: $value;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+// 背景高亮提示文字
+@mixin tips() {
+	margin: 28px auto;
+	padding: 12px 0;
+	text-align: center;
+
+	&.small {
+		margin: 20px;
+		padding: 8px 0;
+		font-size: 14px;
+	}
+
+	p {
+		@include font(inherit, 1.3);
+
+		span {
+			@include color("color_primary");
+		}
+	}
+}
+
+// card-list
+@mixin card($paddingTB: 0, $paddingLR: 0) {
+	position: relative;
+	padding: 0 $paddingLR;
+	@include background('background_light');
+	border: 1px solid transparent;
+	cursor: pointer;
+	border-radius: 8px;
+	transition: all .2s;
+	
+	@at-root [data-theme="light"] & {
+		box-shadow: 0 0 4px rgba(99, 102, 241,0.2);
+	}
+
+	&.dark {
+		@include background('background_light_deep');
+	}
+	
+	&.active {
+		cursor: default;
+	}
+	
+	&.cursor-default {
+		cursor: default;
+	}
+	
+	&:not(.no-border) {
+		&:hover {
+			border: 1px solid rgba(255,255,255,0.2);
+		}
+	}
+
+	&.over-hidden {
+		overflow: hidden;
+	}
+
+	.card-info {
+		padding: $paddingTB 0;
+
+		+.card-info {
+			@include border(border, top);
+		}
+	}
+}

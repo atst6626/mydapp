@@ -1,0 +1,43 @@
+.manager-content {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	
+	.section{
+		flex: 1;		
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.tree-data {
+	margin-top: 12px;
+	
+	.state-label {
+		&.left {
+			left: 0;
+			top: 0;
+		}
+		
+		p {
+			&::after {
+				display: none;
+			}
+			
+			&::before {
+				border-radius: 0 0 8px 0;
+			}
+		}
+	}
+}
+
+.tab-btn{
+	border-radius: 24px;
+	
+	
+	
+	li {
+		flex: unset;
+		padding: 9px 16px;
+	}
+}

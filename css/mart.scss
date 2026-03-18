@@ -1,0 +1,24 @@
+.mart-card {
+	.btn{
+		&.gray {
+			&.hollow {
+				background: rgba(0,0,0,0.4);
+				color: var(--color_main);
+			}
+		}
+	}
+	
+	&::after{
+		content: '\e66f';
+		font-size: 168px;
+	}
+}
+
+
+.market-list{
+	.card-data {
+		display: grid;
+		align-items: center;
+		grid-template-columns: 1fr 1fr 72px;
+	}
+}

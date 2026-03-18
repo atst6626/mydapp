@@ -1,0 +1,44 @@
+/* el-banner */
+.adv-banner .el-carousel__container {
+	height: 240px;
+	padding-bottom: 6px;
+}
+
+.adv-banner .el-carousel__item--card {
+	height: calc(100% - 8px);
+	border-radius: 12px;
+	box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 4px 6px -1px rgb(0 0 0/0.1), 0 2px 4px -2px rgb(0 0 0/0.1);
+}
+
+.adv-banner .el-carousel__item--card:not(.is-active) {
+	opacity: 0.5;
+	filter: blur(1px);
+}
+
+@media (min-width:768.98px) {
+	.adv-banner .el-carousel__item--card.is-active {
+		width: 70%;
+		margin-left: -10%;
+	}
+}
+
+@media (max-width:768.98px) {
+	.adv-banner .el-carousel__container {
+		height: calc(100vw / 3.2);
+	}
+
+	.el-carousel__container {
+		border-radius: 12px;
+	}
+}
+
+.el-carousel__container {
+	overflow: hidden;
+}
+
+
+.notice .el-carousel__container {
+	border-radius: 0;
+}
+
+@media (max-width:768.98px) {}

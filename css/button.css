@@ -1,0 +1,84 @@
+/* el-button */
+.pagenation .el-button+.el-button,
+.button .el-button+.el-button {
+	margin-left: 0;
+}
+
+.el-button>span {
+	display: flex;
+	grid-gap: 8px;
+}
+
+.el-button.small>span,
+.el-button.smaller>span{
+	grid-gap: 6px;
+}
+
+.el-button.mini>span {
+	grid-gap: 4px;
+}
+
+.el-button.btn.select>span {
+	width: 100%;
+}
+
+.el-button.btn.is-disabled {
+	filter: grayscale(1);
+	opacity: 0.2;
+	color: var(--color_main) !important;
+	background: rgba(var(--color_main_rgb), 0.2) !important;
+}
+
+/* is-disabled */
+.el-button.btn.is-disabled:hover::before {
+	filter: brightness(1);
+}
+
+.el-button.btn.is-disabled {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.el-button.btn.default {
+	border-color: #191A23;
+}
+
+/* is-loadding */
+.el-button.btn.is-loading {
+	filter: grayscale(0.8);
+	opacity: 0.8;
+	border: none;
+}
+
+.el-button.btn:not(.transparent):focus {
+	/* background: none; */
+}
+
+@media (max-width:575.98px) {
+	.btn.w-100 {
+		max-width: unset;
+	}
+
+	.button.column .btn+.btn {
+		margin: 16px 0 0;
+	}
+
+	.button.row .btn+.btn {
+		margin-top: 0;
+	}
+}
+
+/* header-button */
+.header .button.small .btn {
+	height: 36px;
+	font-size: 14px;
+	flex: unset;
+	padding: 0 16px;
+}
+
+.header .button.small .btn+.btn {
+	margin-left: 20px;
+}
+
+.header .button.small .btn.default {
+	padding: 0 16px;
+}

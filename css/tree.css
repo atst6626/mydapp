@@ -1,0 +1,297 @@
+/* 树形图 */
+/* 
+主节点添加class:main-node
+副节点添加class:master-node
+普通节点:无
+ */
+
+.tree-data {
+	display: flex;
+	align-items: center;
+
+	/* border-color */
+	/* --border_color: #e8e8e8; */
+	--border: rgba(255, 255, 255, 0.2);
+	--border_w: 2px;
+}
+
+.tree-data>.el-tree-node {
+	margin: 0 auto;
+	/* padding: 16px 20px 0; */
+}
+
+.tree {
+	background: var(--background_light);
+	border-radius: 16px;
+}
+
+.tree-data.el-tree {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 20px;
+	border-radius: inherit;
+	background: inherit;
+}
+
+.tree-data .describe {
+	width: 100%;
+}
+
+.tree-data .el-tree-node__content {
+	height: unset;
+	min-height: unset;
+	display: flex;
+	justify-content: space-between;
+	padding: 4px 6px;
+	background: var(--background_light);
+	border-radius: 8px;
+	border: var(--border_w) solid var(--border);
+	min-width: unset;
+	max-width: 240px;
+	margin: 0 auto 20px;
+	position: relative;
+}
+
+.tree-data .el-tree-node__content:has(.el-icon) {
+	padding-left: 4px !important;
+}
+
+.tree-data .el-tree-node__content:has(.master-node) {
+	border: var(--border_w) solid var(--color_primary);
+	background: rgba(240, 185, 11, 0.1);
+}
+
+.tree-data .el-tree-node__content:has(.main-node) {
+	background: var(--color_primary);
+}
+
+.tree-data .el-tree-node__content:has(.main-node) .btn {
+	color: var(--background_light);
+}
+
+.tree-data .el-tree-node__content:has(.main-node) .el-tree-node__expand-icon {
+	color: rgba(0, 0, 0, 0.5)
+}
+
+.tree-data .el-tree-node__content:has(.el-tree-node__expand-icon:not(.is-leaf)) {
+	padding-right: 0;
+}
+
+.tree-data .el-tree-node__content:has([class*='-node']):after {
+	content: '';
+	display: block;
+	border-radius: 8px 0 0 0;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	position: absolute;
+	top: -1px;
+	left: -1px;
+}
+
+.tree-data .el-tree-node__content:has(.master-node):after {
+	border-top: 8px solid #f0b90b;
+	border-left: 8px solid #f0b90b;
+}
+
+.tree-data .el-tree-node__content:has(.special-node):after {
+	border-top: 8px solid #ff9800;
+	border-left: 8px solid #ff9800;
+}
+
+.tree-data .el-tree-node__content:has(.special-node) {}
+
+/* 选中状态 */
+.tree-data .el-tree-node:focus>.el-tree-node__content {
+	background: var(--background_gray);
+}
+
+.tree-data .el-tree-node:focus>.el-tree-node__content:hover,
+.tree-data .el-tree-node__content:hover {
+	background: var(--background_header);
+}
+
+.tree-data .el-tree-node__content:has(.master-node):hover,
+.tree-data .el-tree-node:has(.master-node):focus>.el-tree-node__content:hover,
+.tree-data .el-tree-node:has(.master-node):focus>.el-tree-node__content {
+	background: rgba(240, 185, 11, 0.1);
+}
+
+.tree-data .el-tree-node__content:has(.main-node):hover,
+.tree-data .el-tree-node:has(.main-node):focus>.el-tree-node__content:hover,
+.tree-data .el-tree-node:has(.main-node):focus>.el-tree-node__content {
+	background: var(--color_primary);
+}
+
+.tree-data .el-tree-node__content::before {
+	content: '';
+	display: block;
+	width: 1px;
+	background: var(--border);
+	position: absolute;
+	top: 100%;
+	left: 50%;
+}
+
+.tree-data .el-tree-node__content:has(.expanded):before {
+	height: 20px;
+}
+
+.tree-data .el-tree-node__content:has(.is-leaf):before {
+	display: none;
+}
+
+.tree-data .el-tree-node__content .is-leaf {
+	display: none;
+}
+
+.is-leaf+.el-tree-node__label {
+	flex: 1;
+	text-align: center;
+	padding-right: 4px;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	overflow: hidden;
+	white-space: initial;
+	word-break: break-all;
+}
+
+.tree-data .el-tree-node__content .el-tree-node__label {
+	order: 0;
+	font-family: boston;
+	color: #fff;
+	font-size: 12px;
+}
+
+.tree-data .el-tree-node__content .el-tree-node__expand-icon {
+	order: 1;
+}
+
+.tree-data .el-tree-node.is-expanded>.el-tree-node__children {
+	display: flex;
+}
+
+.tree-data .el-tree-node>.el-tree-node__children {
+	overflow: unset;
+	display: flex;
+}
+
+.tree-data>.el-tree-node::before,
+.tree-data>.el-tree-node::after {
+	display: none !important;
+}
+
+.el-tree-node {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.el-tree-node::before {
+	content: '';
+	display: block;
+	height: 10px;
+	position: absolute;
+	bottom: 100%;
+	border-top: var(--border_w) solid var(--border);
+	background: var(--background_light);
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.el-tree-node:not(:first-child)::before,
+.el-tree-node:not(:last-child)::before {
+	width: calc(100% + 12px);
+}
+
+.el-tree-node:not(:first-child)::after,
+.el-tree-node:not(:last-child)::after {
+	content: '';
+	display: block;
+	height: 10px;
+	position: absolute;
+	border-left: var(--border_w) solid var(--border);
+	left: 50%;
+	bottom: 100%;
+}
+
+.el-tree-node:last-child:not(:first-child)::before {
+	width: calc(50% + 5px);
+	border-right: var(--border_w) solid var(--border);
+	right: 50%;
+	left: unset;
+	transform: unset;
+}
+
+.el-tree-node:first-child:not(:last-child)::before {
+	width: calc(50% + 5px);
+	border-left: var(--border_w) solid var(--border);
+	left: 50%;
+	transform: unset;
+}
+
+.el-tree-node:last-child::after {
+	display: none;
+}
+
+
+.el-tree-node+.el-tree-node {
+	margin-left: 12px;
+}
+
+
+
+
+/* 项目中的树形图样式 */
+.tree {
+	position: relative;
+	min-height: 200px;
+}
+
+.tree .expand-all {
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 10;
+	border-radius: 0 12px 0 12px;
+}
+
+.tree .btn .account {
+	font-size: 14px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+
+.tree .level-text {
+	color: var(--background_light);
+	font-size: 11px;
+	font-family: montB;
+	transform: skew(-20deg);
+}
+
+.main-node {
+	position: relative;
+}
+
+.main-node::after {
+	content: '';
+	display: block;
+	position: absolute;
+	top: -8px;
+	left: -14px;
+	right: 0;
+	bottom: -8px;
+	z-index: 1;
+}
+
+.tree-data-item .state-label::after {
+	content: '';
+	display: block;
+	position: absolute;
+	top: -8px;
+	left: -8px;
+	right: -8px;
+	bottom: -8px;
+	z-index: 1;
+}

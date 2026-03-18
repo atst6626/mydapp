@@ -1,0 +1,73 @@
+.bg-linear {
+	background: linear-gradient(to bottom, rgba(0, 0, 0, .15), #20252c);
+	backdrop-filter: blur(2px);
+	border-top: 1px solid rgba(255, 255, 255, .2);
+	border-radius: 20px;
+	padding: 16px;
+	
+	@at-root [data-theme="light"] & {
+		background: linear-gradient(to bottom, #fff, #fff);
+	}
+	
+	&.bg-gray {
+		background: linear-gradient(to bottom, rgba(0, 0, 0, .15), #1e2329);
+		
+		@at-root [data-theme="light"] & {
+			background: linear-gradient(to bottom, #fff, #fff);
+		}
+	}
+	
+	&.p-16 {
+		padding: 16px;
+	}
+}
+
+
+.level {
+	&.level-0 {
+		--background: linear-gradient(to bottom, #dee4eb, #a0a4ac);
+	}
+
+	&.level-1 {
+		--background: linear-gradient(to bottom, #fcfdfe, #aec6f2);
+	}
+
+	&.level-2 {
+		--background: linear-gradient(to bottom, #c6f5ff, #6ee5ff);
+	}
+
+	&.level-3 {
+		--background: linear-gradient(to bottom, #d8efff, #94dafd);
+	}
+
+	&.level-4 {
+		--background: linear-gradient(to bottom, #d5d2ff, #9a88f3);
+	}
+
+
+	&.level-5 {
+		--background: linear-gradient(to bottom, #f5d6ff, #dd96fd);
+	}
+
+	&.level-6 {
+		--background: linear-gradient(to bottom, #ffbdd4, #fe3cac);
+	}
+
+	&.level-7 {
+		--background: linear-gradient(to bottom, #ffebd0, #fe5e31);
+
+	}
+
+	&.level-8 {
+		--background: linear-gradient(to bottom, #ffe965, #fcbe1b);
+
+	}
+
+	&.level-9 {
+		--background: linear-gradient(to bottom, #cbdefe, #7083e0);
+	}
+
+	&.level-10 {
+		--background: linear-gradient(to bottom, #faffff, #91bdfb, #aea3ff);
+	}
+}
